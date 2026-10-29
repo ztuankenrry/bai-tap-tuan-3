@@ -1,0 +1,72 @@
+#include <iostream>
+using namespace std;
+
+struct Entry {
+    int key;
+    int value;
+    bool used = false;
+};
+
+struct hashtable {
+    Entry table[10];
+
+    int hashFunction(int key) {
+        return key % 10;
+    }
+
+    void insert(int key, int value) { 
+        int idx = hashFunction(key);
+        while (table[idx].used && table[idx].key != key) {
+            idx = (idx + 1) % 10;
+        }
+        table[idx].key = key;
+        table[idx].value = value;
+        table[idx].used = true;
+    }
+
+    int find(int key) {
+        int idx = hashFunction(key);
+        for (int i = 0; i < 10; i++) {
+            int curr = (idx + i) % 10;
+            if (!table[curr].used) {
+                break; 
+            }
+            if (table[curr].key == key) {
+                return table[curr].value;
+            }
+        }
+        return -1;
+    }
+
+    void remove(int key) {
+        int idx = hashFunction(key);
+        for (int i = 0; i < 10; i++) {
+            int curr = (idx + i) % 10;
+            if (!table[curr].used) {
+                break;
+            }
+            if (table[curr].key == key) {
+                table[curr].used = false; 
+                return;
+            }
+        }
+    }
+};
+
+int main() {
+    hashtable ht;
+
+    ht.insert(3, 50);
+    ht.insert(13, 150); 
+    ht.insert(23, 250); 
+    cout << "Tim key 3, gia tri: " << ht.find(3) << endl;
+    cout << "Tim key 13, gia tri: " << ht.find(13) << endl;
+    cout << "Tim key 23, gia tri: " << ht.find(23) << endl;
+
+    // Xóa phần tử
+    ht.remove(13);
+    cout << "Sau khi xoa key 13, tim lai key 13: " << ht.find(13) << endl;
+    cout << "Tim key 23 van phai ton tai: " << ht.find(23) << endl;
+
+    return 0;
+}
